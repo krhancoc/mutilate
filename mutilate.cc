@@ -29,9 +29,9 @@
 
 #include "AdaptiveSampler.h"
 #include "AgentStats.h"
-#ifndef HAVE_PTHREAD_BARRIER_INIT
-#include "barrier.h"
-#endif
+//#ifndef HAVE_PTHREAD_BARRIER_INIT
+//#include "barrier.h"
+//#endif
 #include "cmdline.h"
 #include "Connection.h"
 #include "ConnectionOptions.h"
