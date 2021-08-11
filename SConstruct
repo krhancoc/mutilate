@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/local/bin/python2.7
 import os
 import sys
 
@@ -6,8 +6,8 @@ env = Environment(ENV = os.environ)
 
 env['HAVE_POSIX_BARRIER'] = True
 
-env.Append(CPPPATH = ['/usr/local/include', '/opt/local/include'])
-env.Append(LIBPATH = ['/opt/local/lib'])
+env.Append(CPPPATH = ['/usr/include', '/usr/local/include', '/opt/local/include'])
+env.Append(LIBPATH = ['/usr/lib/', '/usr/local/lib', '/opt/local/lib'])
 env.Append(CCFLAGS = '-std=c++11 -D_GNU_SOURCE')
 if sys.platform == 'darwin':
     env['CC']  = 'clang'
@@ -33,20 +33,20 @@ if not conf.CheckLibWithHeader("pthread", "pthread.h", "C++"):
 conf.CheckLib("rt", "clock_gettime", language="C++")
 conf.CheckLibWithHeader("zmq", "zmq.hpp", "C++")
 if not conf.CheckFunc('pthread_barrier_init'):
-    conf.env['HAVE_POSIX_BARRIER'] = False
+    conf.env['HAVE_POSIX_BARRIER'] = True
 
 env = conf.Finish()
 
-env.Append(CFLAGS = ' -O3 -Wall -g')
-env.Append(CPPFLAGS = ' -O3 -Wall -g')
+env.Append(CFLAGS = ' -O3 -Wall -g -pthread')
+env.Append(CPPFLAGS = ' -O3 -Wall -g -pthread')
 
 env.Command(['cmdline.cc', 'cmdline.h'], 'cmdline.ggo', 'gengetopt < $SOURCE')
 
 src = Split("""mutilate.cc cmdline.cc log.cc distributions.cc util.cc
                Connection.cc Protocol.cc Generator.cc""")
 
-if not env['HAVE_POSIX_BARRIER']: # USE_POSIX_BARRIER:
-    src += ['barrier.cc']
+#if not env['HAVE_POSIX_BARRIER']: # USE_POSIX_BARRIER:
+#    src += ['barrier.cc']
 
 env.Program(target='mutilate', source=src)
 env.Program(target='gtest', source=['TestGenerator.cc', 'log.cc', 'util.cc',
